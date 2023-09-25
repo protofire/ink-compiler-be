@@ -43,7 +43,7 @@ pub struct DeployMessage {
     pub user_address: String,
     pub tx_hash: Option<String>,
     pub date: String,
-    pub is_external: bool,
+    pub contract_type: String,
     pub external_abi: Option<String>,
 }
 
