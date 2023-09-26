@@ -21,7 +21,7 @@ mod get_deployments_test {
     #[test]
     fn get_deployments_user_address_missing_error() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
-        let url = format!("/deployments?network=");
+        let url = "/deployments?network=".to_string();
         let response = client.get(url).dispatch();
         assert_eq!(response.status(), Status::NotFound);
         assert!(response
@@ -34,7 +34,7 @@ mod get_deployments_test {
     #[test]
     fn get_deployments_network_missing_and_empty_user_address_empty_result() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
-        let url = format!("/deployments?user_address=");
+        let url = "/deployments?user_address=".to_string();
         let response = client.get(url).dispatch();
         assert_eq!(response.status(), Status::Ok);
         assert!(response
@@ -47,7 +47,7 @@ mod get_deployments_test {
     #[test]
     fn get_deployments_no_data() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
-        let url = format!("/deployments?user_address=&network=");
+        let url = "/deployments?user_address=&network=".to_string();
         let response = client.get(url).dispatch();
         assert_eq!(response.status(), Status::Ok);
         assert!(response
@@ -86,6 +86,7 @@ mod get_deployments_test {
             "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "some_network"
         );
         let response = client.get(url).dispatch();
+
         assert_eq!(response.status(), Status::Ok);
         assert!(response
             .into_string()

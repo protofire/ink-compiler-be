@@ -71,7 +71,7 @@ mod post_deployments_test {
     #[test]
     fn post_deployments_contract_address_error() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
-        let response = client.post(uri!("/deployments")).body(r#"{ "contract_address": "some_address", "network": "some_network", "code_id": "some_id", "user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY" }"#).dispatch();
+        let response = client.post(uri!("/deployments")).body(r#"{ "contract_address": "some_address", "network": "some_network", "code_id": "some_id", "user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "contract_type": "psp22" }"#).dispatch();
         assert_eq!(response.status(), Status::InternalServerError);
         assert!(response
             .into_string()
