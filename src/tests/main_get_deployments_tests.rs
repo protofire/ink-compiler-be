@@ -80,7 +80,7 @@ mod get_deployments_test {
     fn get_deployments_matching_routes_error() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let db = client.rocket().state::<MongoRepo>().unwrap();
-        client.post(uri!("/deployments")).body(r#"{ "contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutnn", "network": "some_network", "code_id": "some_impossible_id", "user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY" }"#).dispatch();
+        client.post(uri!("/deployments")).body(r#"{ "contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutnn", "network": "some_network", "code_id": "some_impossible_id", "user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "date":"2021-03-03T15:00:00.000Z", "contract_type":"custom" }"#).dispatch();
         let url = format!(
             "/deployments?user_address={}&network={}",
             "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "some_network"
@@ -91,12 +91,12 @@ mod get_deployments_test {
         assert!(response
             .into_string()
             .unwrap()
-            .contains("{\"contract_name\":null,\"contract_address\":\"5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutnn\",\"network\":\"some_network\",\"code_id\":\"some_impossible_id\",\"user_address\":\"5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY\"}"));
+            .contains("{\"contract_name\":null,\"contract_address\":\"5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutnn\",\"network\":\"some_network\",\"code_id\":\"some_impossible_id\",\"user_address\":\"5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY\",\"tx_hash\":null,\"date\":\"2021-03-03T15:00:00.000Z\",\"contract_type\":\"custom\",\"external_abi\":null}"));
         let db_res = db.deployments.delete_one(
-            doc! {"contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY","user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"},
+            doc! {"contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutnn","user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"},
             None,
         );
         assert!(db_res.is_ok());
-        client.terminate();
+        //client.terminate();
     }
 }
