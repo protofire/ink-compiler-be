@@ -89,7 +89,7 @@ mod post_deployments_test {
         assert_eq!(response.status(), Status::Ok);
 
         let db_res = db.deployments.delete_one(
-            doc! {"contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY","user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"},
+            doc! {"contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY","network": "some_network", "user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"},
             None,
         );
         assert!(db_res.is_ok());
@@ -98,7 +98,7 @@ mod post_deployments_test {
     }
 
     #[test]
-    fn post_deployments_update_is_ok() {
+    fn patch_deployments_update_is_ok() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let db = client.rocket().state::<MongoRepo>().unwrap();
 
@@ -107,14 +107,14 @@ mod post_deployments_test {
         assert_eq!(response.status(), Status::Ok);
         std::mem::drop(response);
 
-        let response = client.post(uri!("/update-deployment")).body(r#"{ "contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "network": "some_network",  "user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",  "contract_name":"name", "hidden": true}"#).dispatch();
+        let response = client.patch(uri!("/deployments")).body(r#"{ "contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "network": "some_network",  "user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",  "contract_name":"name", "hidden": true}"#).dispatch();
         // status ok means that the deployment was updated in the database
         assert_eq!(response.status(), Status::Ok);
         std::mem::drop(response);
 
         // Cleanup
         let db_res = db.deployments.delete_one(
-            doc! {"contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY","user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"},
+            doc! {"contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY","network": "some_network", "user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"},
             None,
         );
         assert!(db_res.is_ok());

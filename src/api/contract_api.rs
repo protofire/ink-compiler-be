@@ -157,7 +157,7 @@ pub fn store_deployment(
     }
 }
 
-#[post("/update-deployment", data = "<update_deploy_message>")]
+#[patch("/deployments", data = "<update_deploy_message>")]
 pub fn update_deployment(
     db: &State<MongoRepo>,
     update_deploy_message: Json<UpdateDeployMessage>,
