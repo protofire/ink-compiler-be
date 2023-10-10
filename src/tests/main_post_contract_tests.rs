@@ -66,7 +66,7 @@ mod post_contract_test {
         assert!(response
             .into_string()
             .unwrap()
-            .contains("Address is not valid."));
+            .contains("Address is not valid: Length is bad"));
         client.terminate();
     }
 
@@ -75,7 +75,7 @@ mod post_contract_test {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let response = client
             .post(uri!("/contract"))
-            .body(r#"{ "address": "4GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "code": "something", "features": ["asdf"] }"#)
+            .body(r#"{ "address": "XYtLu1tuJ8zBc3NZGSDnU5kSig7j6mHY1FBg8YXNkk4NMmM", "code": "something", "features": ["asdf"] }"#)
             .dispatch();
         assert_eq!(response.status(), Status::InternalServerError);
         assert!(response
@@ -90,7 +90,7 @@ mod post_contract_test {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let one_mb_string = "a".repeat(999999);
         let body = format!(
-            r#"{{ "address": "4GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "code": "{}", "features": ["psp22"] }}"#,
+            r#"{{ "address": "XYtLu1tuJ8zBc3NZGSDnU5kSig7j6mHY1FBg8YXNkk4NMmM", "code": "{}", "features": ["psp22"] }}"#,
             one_mb_string
         );
         let response = client.post(uri!("/contract")).body(body).dispatch();
@@ -105,10 +105,12 @@ mod post_contract_test {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let db = client.rocket().state::<MongoRepo>().unwrap();
         let body = format!(
-            r#"{{ "address": "4GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "code": "{}", "features": ["psp22"] }}"#,
+            r#"{{ "address": "XYtLu1tuJ8zBc3NZGSDnU5kSig7j6mHY1FBg8YXNkk4NMmM", "code": "{}", "features": ["psp22"] }}"#,
             VALID_INK_SC
         );
         let response = client.post(uri!("/contract")).body(body).dispatch();
+        //println!("{:?}", response.status());
+        //println!("{:?}", response.into_string());
         assert_eq!(response.status(), Status::Ok);
 
         let json: ServerResponse<Contract> = response.into_json().unwrap();
@@ -119,6 +121,6 @@ mod post_contract_test {
             .delete_one(doc! {"code_id": contract.code_id}, None)
             .unwrap();
         assert_eq!(db_res.deleted_count, 1);
-        client.terminate();
+        //client.terminate();
     }
 }

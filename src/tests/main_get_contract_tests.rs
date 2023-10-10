@@ -55,7 +55,7 @@ mod get_contract_test {
         let db = client.rocket().state::<MongoRepo>().unwrap();
 
         let body = format!(
-            r#"{{ "address": "4GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "code": "{}", "features": ["psp22"] }}"#,
+            r#"{{ "address": "XYtLu1tuJ8zBc3NZGSDnU5kSig7j6mHY1FBg8YXNkk4NMmM", "code": "{}", "features": ["psp22"] }}"#,
             VALID_INK_SC
         );
         client.post(uri!("/contract")).body(body).dispatch();

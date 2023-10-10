@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod compiler_tests{
+mod compiler_test {
     use super::super::*;
 
     extern crate dotenv;
@@ -18,14 +18,15 @@ mod compiler_tests{
         let shutdown_flag = Arc::new(AtomicBool::new(false));
         let compiler = Compiler::init(compilation_queue, shutdown_flag.clone());
 
-        let wizard_message = WizardMessage{
+        let wizard_message = WizardMessage {
             address: "ABC".to_string(),
             code: LIB_RS_CODE.to_string(),
             features: vec!["psp22".to_string(), "ownable".to_string()],
         };
 
         // Create lib.rs file
-        compiler.create_contract_files(&wizard_message)
+        compiler
+            .create_contract_files(&wizard_message)
             .expect("Could not create lib.rs file");
 
         // Compile contract
