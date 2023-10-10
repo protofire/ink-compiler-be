@@ -57,6 +57,20 @@ The project consists of four main modules:
 
 ## API Reference
 
+#### Get API Version
+
+Returns the current version of the API
+
+```http
+  GET /version
+```
+
+Response body example:
+
+```json
+ "v1.0.0"
+```
+
 #### Send contract to be compiled
 Accepts a JSON payload representing a smart contract in plain text, compiles it and returns the compiled contract.
 
