@@ -2,6 +2,7 @@ use crate::models::api_models::{ServerResponse, WizardMessage};
 use crate::models::db_models::Contract;
 use log::error;
 use rocket::{http::Status, response::status::Custom, serde::json::Json};
+use sp_core::crypto::{AccountId32, Ss58Codec};
 
 pub const CONTRACTS: [&str; 3] = ["psp22", "psp34", "psp37"];
 
@@ -31,7 +32,7 @@ pub fn sanity_check_wizard_message(
     }
 
     // Checks the address len is valid
-    match check_address_len(&wizard_message.address) {
+    match check_address(&wizard_message.address) {
         Ok(_) => (),
         Err(msg) => {
             return Err(Custom(
@@ -54,12 +55,12 @@ pub fn check_code_len(code: &String) -> Result<(), String> {
     Ok(())
 }
 
-pub fn check_address_len(address: &String) -> Result<(), String> {
-    println!("Address: {:?}", address);
-    println!("Address len: {:?}", address.len());
-    if address.to_owned().len() != 48 {
-        error!(target: "compiler", "Address is not valid");
-        return Err("Address is not valid.".to_string());
+pub fn check_address(address: &String) -> Result<(), String> {
+    let ss58_check = AccountId32::from_ss58check(address);
+    if ss58_check.is_err() {
+        let err_msg = format!("Address is not valid: {:?}", ss58_check.unwrap_err());
+        error!(target: "compiler", "{}", err_msg);
+        return Err(err_msg);
     }
     Ok(())
 }

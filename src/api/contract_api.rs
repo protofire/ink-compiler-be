@@ -2,7 +2,7 @@ use std::sync::mpsc::channel;
 use std::sync::Arc;
 
 use crate::utils::compilation_queue::CompilationRequest;
-use crate::utils::sanity_check::check_address_len;
+use crate::utils::sanity_check::check_address;
 use crate::{
     models::{
         api_models::{
@@ -121,8 +121,8 @@ pub fn store_deployment(
     deploy_message: Json<DeployMessage>,
 ) -> Result<Json<ServerResponse<String>>, Custom<Json<ServerResponse<String>>>> {
     // Check the address is valid
-    if check_address_len(&deploy_message.user_address).is_err()
-        || check_address_len(&deploy_message.contract_address).is_err()
+    if check_address(&deploy_message.user_address).is_err()
+        || check_address(&deploy_message.contract_address).is_err()
     {
         return Err(Custom(
             Status::InternalServerError,
@@ -163,8 +163,8 @@ pub fn update_deployment(
     update_deploy_message: Json<UpdateDeployMessage>,
 ) -> Result<Json<ServerResponse<String>>, Custom<Json<ServerResponse<String>>>> {
     // Check the address is valid
-    if check_address_len(&update_deploy_message.user_address).is_err()
-        || check_address_len(&update_deploy_message.contract_address).is_err()
+    if check_address(&update_deploy_message.user_address).is_err()
+        || check_address(&update_deploy_message.contract_address).is_err()
     {
         return Err(Custom(
             Status::InternalServerError,
