@@ -283,7 +283,9 @@ pub fn get_contract(
 // Endpoint for fetching api version
 #[get("/version")]
 pub fn get_version() -> Json<ServerResponse<String>> {
-    Json(ServerResponse::new_valid(String::from("v1.0.0")))
+    Json(ServerResponse::new_valid(String::from(env!(
+        "CARGO_PKG_VERSION"
+    ))))
 }
 
 // This function creates the hash of the contract file
