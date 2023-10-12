@@ -280,6 +280,14 @@ pub fn get_contract(
     }
 }
 
+// Endpoint for fetching api version
+#[get("/version")]
+pub fn get_version() -> Json<ServerResponse<String>> {
+    Json(ServerResponse::new_valid(String::from(env!(
+        "CARGO_PKG_VERSION"
+    ))))
+}
+
 // This function creates the hash of the contract file
 pub fn hash_code(code: &String) -> String {
     let mut hasher = Sha256::new();
