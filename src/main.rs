@@ -10,8 +10,8 @@ use dotenv::dotenv;
 extern crate rocket;
 
 use api::contract_api::{
-    fetch_or_compile_contract, get_contract, get_contract_deployments, get_version,
-    store_deployment, update_deployment,
+    fetch_or_compile_contract, get_contract, get_contract_deployment_by_id,
+    get_contract_deployments, get_version, store_deployment, update_deployment,
 };
 use repository::mongodb_repo::MongoRepo;
 use rocket::fairing::AdHoc;
@@ -72,6 +72,7 @@ fn rocket() -> _ {
                 store_deployment,
                 update_deployment,
                 get_contract_deployments,
+                get_contract_deployment_by_id,
                 get_contract,
                 get_version
             ],

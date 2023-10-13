@@ -568,6 +568,7 @@ name = "compiler-be"
 version = "1.1.0"
 dependencies = [
  "dotenv",
+ "hex",
  "log",
  "log4rs",
  "mongodb",
