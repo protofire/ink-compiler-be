@@ -109,8 +109,7 @@ mod post_contract_test {
             VALID_INK_SC
         );
         let response = client.post(uri!("/contract")).body(body).dispatch();
-        //println!("{:?}", response.status());
-        //println!("{:?}", response.into_string());
+
         assert_eq!(response.status(), Status::Ok);
 
         let json: ServerResponse<Contract> = response.into_json().unwrap();
@@ -121,6 +120,6 @@ mod post_contract_test {
             .delete_one(doc! {"code_id": contract.code_id}, None)
             .unwrap();
         assert_eq!(db_res.deleted_count, 1);
-        //client.terminate();
+        client.terminate();
     }
 }
