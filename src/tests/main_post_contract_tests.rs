@@ -119,6 +119,6 @@ mod post_contract_test {
             .delete_one(doc! {"code_id": contract.code_id}, None)
             .unwrap();
         assert_eq!(db_res.deleted_count, 1);
-        //client.terminate();
+        client.terminate();
     }
 }
