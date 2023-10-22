@@ -167,7 +167,7 @@ Response body example:
 ```
 
 #### Upload contract deployment information
-Accepts a JSON payload representing a smart contract deployment and stores it in the database.
+Accepts a JSON payload representing a smart contract deployment and stores it in the database. It will return a unique Id when success.
 
 ```http
   POST /deployments
@@ -204,7 +204,79 @@ Response body example:
 
 ```json
 {
+    "data": "652ee5587fbadc38e3b17bab",
+    "error": null
+}
+```
+
+#### Modify contract deployment information
+Accepts a JSON payload representing a smart contract deployment and stores it in the database.
+
+```http
+  PATCH /deployments
+```
+ "contract_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "network": "some_network",  "user_address": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",  "contract_name":"name", "hidden": true
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `contract_name`      | `string` | **Optional**. The name of the smart contract. |
+| `contract_address`      | `string` | **Required**. The address of the deployed smart contract. |
+| `network`      | `string` | **Required**. The network where the smart contract was deployed. |
+| `user_address`      | `string` | **Required**. The wallet address of the smart contract deployer. |
+| `hidden`      | boolean | **Optional**. True to be hidden in the UI |
+
+Request body example:
+
+```json
+{
+    "contract_name": "Test Token",
+    "contract_address": "5Dsykc2KUHcziwcTgZkHxyDDTotBJbGNh3BakfZ5PdDGMzfn",
+    "network": "Rococo",
+    "user_address": "ZA9WeQNb3QKmqvNi1szndDMchQ66npnDFXpjWuKayXQpriW",
+    "hidden": true
+}
+```
+
+Response body example:
+
+```json
+{
     "data": "ok",
+    "error": null
+}
+```
+
+#### Get the deployment by Id
+Returns the deployment by the Id provided when created.
+
+``` http
+  GET /deployment?{id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. The Id of the deployment. |
+
+Request example:
+
+```http
+  GET /deployments?id=652ee5587fbadc38e3b17bab
+```
+
+Response body example:
+
+```json
+{
+    "data": [
+        {
+            "id": "652ee5587fbadc38e3b17bab",
+            "contract_name": "Test Token",
+            "contract_address": "5Dsykc2KUHcziwcTgZkHxyDDTotBJbGNh3BakfZ5PdDGMzfn",
+            "network": "Rococo",
+            "code_id": "5a4ce58af5294a73b22b5c6bf1b1a8886972598925ddee77c3a591ced4bae78b",
+            "user_address": "ZA9WeQNb3QKmqvNi1szndDMchQ66npnDFXpjWuKayXQpriW"
+        }
+    ],
     "error": null
 }
 ```
@@ -235,6 +307,7 @@ Response body example:
 {
     "data": [
         {
+            "id": "652ee5587fbadc38e3b17bab",
             "contract_name": "Test Token",
             "contract_address": "5Dsykc2KUHcziwcTgZkHxyDDTotBJbGNh3BakfZ5PdDGMzfn",
             "network": "Rococo",
