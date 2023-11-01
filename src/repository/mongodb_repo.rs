@@ -3,7 +3,7 @@ use std::env;
 use crate::models::api_models::{GetDeploymentsMessage, UpdateDeployMessage};
 use crate::models::db_models::{Contract, Deployment};
 use crate::utils::common::string_to_object_id;
-use mongodb::results::UpdateResult;
+use mongodb::results::{DeleteResult, UpdateResult};
 use mongodb::{
     bson::doc,
     results::InsertOneResult,
@@ -97,6 +97,17 @@ impl MongoRepo {
         let filter = doc! {"contract_address": &update_deployment.contract_address, "network": &update_deployment.network, "user_address": &update_deployment.user_address};
         let deployment = self
             .deployments.update_one(filter, doc! {"$set": {"contract_name": &update_deployment.contract_name, "hidden": &update_deployment.hidden}}, None)?;
+        Ok(deployment)
+    }
+
+    // Delete a deployment from the database
+    pub fn delete_deployment(
+        &self,
+        deployment_id: &String,
+    ) -> Result<DeleteResult, Box<dyn std::error::Error>> {
+        let obj_id = string_to_object_id(deployment_id.to_string())?;
+        let filter = doc! {"_id": obj_id};
+        let deployment = self.deployments.delete_one(filter, None)?;
         Ok(deployment)
     }
 

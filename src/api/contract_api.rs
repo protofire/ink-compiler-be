@@ -199,8 +199,8 @@ pub fn update_deployment(
 }
 
 // delete deployment by Id
-#[delete("/deployments?<id>")]
-pub fn delete_deplyment(
+#[delete("/deployment", data = "<id>")]
+pub fn delete_deployment(
     db: &State<MongoRepo>,
     id: String,
 ) -> Result<Json<ServerResponse<String>>, Custom<Json<ServerResponse<String>>>> {
