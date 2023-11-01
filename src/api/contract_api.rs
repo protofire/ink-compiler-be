@@ -198,6 +198,35 @@ pub fn update_deployment(
     }
 }
 
+// delete deployment by Id
+#[delete("/deployments?<id>")]
+pub fn delete_deplyment(
+    db: &State<MongoRepo>,
+    id: String,
+) -> Result<Json<ServerResponse<String>>, Custom<Json<ServerResponse<String>>>> {
+    // Deleting the deployment in db
+    let deployment_delete_result = db.delete_deployment(&id);
+    info!(target: "compiler", "Deleting deployment {} from the database", &id);
+
+    // Evaluate the result of the delete operation
+    match deployment_delete_result {
+        Ok(_) => {
+            info!(target: "compiler", "Deployment {} deleted from the database", &id);
+            Ok(Json(ServerResponse::new_valid(String::from("ok"))))
+        }
+
+        Err(_) => {
+            error!(target: "compiler", "There was an error deleting the deployment {}", &id);
+            Err(Custom(
+                Status::InternalServerError,
+                Json(ServerResponse::new_error(String::from(
+                    "Error deleting deployment.",
+                ))),
+            ))
+        }
+    }
+}
+
 // /deployments endpoint for fetching a deployment
 #[get("/deployments?<user_address>&<network>&<contract_address>")]
 pub fn get_contract_deployments(
