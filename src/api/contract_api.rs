@@ -199,7 +199,7 @@ pub fn update_deployment(
 }
 
 // delete deployment by Id
-#[delete("/deployment", data = "<id>")]
+#[delete("/deployment?<id>")]
 pub fn delete_deployment(
     db: &State<MongoRepo>,
     id: String,
@@ -215,8 +215,9 @@ pub fn delete_deployment(
             Ok(Json(ServerResponse::new_valid(String::from("ok"))))
         }
 
-        Err(_) => {
+        Err(e) => {
             error!(target: "compiler", "There was an error deleting the deployment {}", &id);
+            error!(target: "compiler", "Error: {}", e);
             Err(Custom(
                 Status::InternalServerError,
                 Json(ServerResponse::new_error(String::from(
