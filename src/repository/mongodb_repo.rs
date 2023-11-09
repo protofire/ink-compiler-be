@@ -3,6 +3,7 @@ use std::env;
 use crate::models::api_models::{GetDeploymentsMessage, UpdateDeployMessage};
 use crate::models::db_models::{Contract, Deployment};
 use crate::utils::common::string_to_object_id;
+
 use mongodb::results::UpdateResult;
 use mongodb::{
     bson::doc,

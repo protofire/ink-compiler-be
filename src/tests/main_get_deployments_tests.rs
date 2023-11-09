@@ -92,6 +92,7 @@ mod get_deployments_test {
         let response = client.get(url).dispatch();
 
         assert_eq!(response.status(), Status::Ok);
+      
         let original_json = r#"{"data":[{"_id":{"$oid":"OID_PLACEHOLDER"},"contract_name":null,"contract_address":"5CfkL1QXpnMoto87UYNER6B9dktRADjn1Vyrvzvc4ZziraFs","network":"some_network","code_id":"some_impossible_id","user_address":"5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY","tx_hash":null,"date":"2021-03-03T15:00:00.000Z","contract_type":"custom","external_abi":null,"hidden":false}],"error":null}"#;
         let final_json = original_json.replace("OID_PLACEHOLDER", &deployment_id);
         assert_eq!(response.into_string().unwrap(), final_json);
