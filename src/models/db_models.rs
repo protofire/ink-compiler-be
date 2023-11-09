@@ -15,9 +15,8 @@ pub struct Contract {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Deployment {
-    //#[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-    #[serde(skip_serializing)]
-    pub id: Option<ObjectId>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub _id: Option<ObjectId>,
     pub contract_name: Option<String>,
     pub contract_address: String,
     pub network: String,
@@ -33,7 +32,7 @@ pub struct Deployment {
 impl Deployment {
     pub fn new(deploy_message: &DeployMessage) -> Self {
         Deployment {
-            id: None,
+            _id: None,
             contract_name: deploy_message.contract_name.clone(),
             contract_address: deploy_message.contract_address.clone(),
             network: deploy_message.network.clone(),

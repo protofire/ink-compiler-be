@@ -2,6 +2,8 @@ use std::env;
 
 use crate::models::api_models::{GetDeploymentsMessage, UpdateDeployMessage};
 use crate::models::db_models::{Contract, Deployment};
+use crate::utils::common::string_to_object_id;
+
 use mongodb::results::UpdateResult;
 use mongodb::{
     bson::doc,
@@ -128,5 +130,15 @@ impl MongoRepo {
             .collect();
 
         Ok(deployments_vec)
+    }
+
+    pub fn get_deployment_by_id(
+        &self,
+        id: &String,
+    ) -> Result<Option<Deployment>, Box<dyn std::error::Error>> {
+        let obj_id = string_to_object_id(id.to_string())?;
+        let filter = doc! {"_id": obj_id};
+        let deployment = self.deployments.find_one(filter, None)?;
+        Ok(deployment)
     }
 }

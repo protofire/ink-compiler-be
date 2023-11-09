@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod sanity_check_tests {
+mod sanity_check_test {
 
     use crate::models::db_models::Contract;
 
@@ -41,7 +41,7 @@ mod sanity_check_tests {
         let expected_error = Err(Custom(
             Status::InternalServerError,
             Json(ServerResponse::<Contract>::new_error(String::from(
-                "Address is not valid.",
+                "Address is not valid: Base 58 requirement is violated",
             ))),
         ));
 

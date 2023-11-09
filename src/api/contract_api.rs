@@ -2,7 +2,7 @@ use std::sync::mpsc::channel;
 use std::sync::Arc;
 
 use crate::utils::compilation_queue::CompilationRequest;
-use crate::utils::sanity_check::check_address_len;
+use crate::utils::sanity_check::check_address;
 use crate::{
     models::{
         api_models::{
@@ -121,8 +121,8 @@ pub fn store_deployment(
     deploy_message: Json<DeployMessage>,
 ) -> Result<Json<ServerResponse<String>>, Custom<Json<ServerResponse<String>>>> {
     // Check the address is valid
-    if check_address_len(&deploy_message.user_address).is_err()
-        || check_address_len(&deploy_message.contract_address).is_err()
+    if check_address(&deploy_message.user_address).is_err()
+        || check_address(&deploy_message.contract_address).is_err()
     {
         return Err(Custom(
             Status::InternalServerError,
@@ -140,9 +140,10 @@ pub fn store_deployment(
 
     // Evaluate the result of the save operation
     match deployment_save_result {
-        Ok(_) => {
+        Ok(result) => {
+            let id: String = result.inserted_id.as_object_id().unwrap().to_hex();
             info!(target: "compiler", "Deployment {} saved in the database", &deployment.contract_address);
-            Ok(Json(ServerResponse::new_valid(String::from("ok"))))
+            Ok(Json(ServerResponse::new_valid(id)))
         }
 
         Err(_) => {
@@ -163,8 +164,8 @@ pub fn update_deployment(
     update_deploy_message: Json<UpdateDeployMessage>,
 ) -> Result<Json<ServerResponse<String>>, Custom<Json<ServerResponse<String>>>> {
     // Check the address is valid
-    if check_address_len(&update_deploy_message.user_address).is_err()
-        || check_address_len(&update_deploy_message.contract_address).is_err()
+    if check_address(&update_deploy_message.user_address).is_err()
+        || check_address(&update_deploy_message.contract_address).is_err()
     {
         return Err(Custom(
             Status::InternalServerError,
@@ -220,11 +221,37 @@ pub fn get_contract_deployments(
             Ok(Json(ServerResponse::new_valid(deployments_unwrapped)))
         }
         Err(_) => {
-            error!(target: "compiler", "There was an error fetching the deployment for user {}", &user_address);
+            error!(target: "compiler", "There was an error fetching the deployments for user {}", &user_address);
             Err(Custom(
                 Status::InternalServerError,
                 Json(ServerResponse::new_error(String::from(
                     "Error getting deployments.",
+                ))),
+            ))
+        }
+    }
+}
+
+// /deployments endpoint for fetching a deployment by its id
+#[get("/deployment?<id>")]
+pub fn get_contract_deployment_by_id(
+    db: &State<MongoRepo>,
+    id: String,
+) -> Result<Json<ServerResponse<Deployment>>, Custom<Json<ServerResponse<Deployment>>>> {
+    let deployment = db.get_deployment_by_id(&id);
+
+    match deployment {
+        Ok(Some(deployment)) => {
+            info!(target: "compiler", "Deployment fetched from the database by ID {}.", &id);
+            Ok(Json(ServerResponse::new_valid(deployment)))
+        }
+        _ => {
+            error!(target: "compiler", "No deployment found in the database for ID {}.", &id);
+            Err(Custom(
+                Status::NotFound,
+                Json(ServerResponse::new_error(format!(
+                    "No deployment found for ID {}",
+                    &id
                 ))),
             ))
         }
@@ -278,6 +305,14 @@ pub fn get_contract(
             ))
         }
     }
+}
+
+// Endpoint for fetching api version
+#[get("/version")]
+pub fn get_version() -> Json<ServerResponse<String>> {
+    Json(ServerResponse::new_valid(String::from(env!(
+        "CARGO_PKG_VERSION"
+    ))))
 }
 
 // This function creates the hash of the contract file
