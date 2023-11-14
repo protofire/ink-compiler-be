@@ -109,7 +109,6 @@ mod post_contract_test {
             VALID_INK_SC
         );
         let response = client.post(uri!("/contract")).body(body).dispatch();
-
         assert_eq!(response.status(), Status::Ok);
 
         let json: ServerResponse<Contract> = response.into_json().unwrap();
